@@ -1,16 +1,28 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {exec} from '@actions/exec'
+import {deleteEnvironment} from './environment'
+import {prereleaseTag, releaseTag} from './tag'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const key = core.getInput('key', {required: true}).toLowerCase()
+    const token = core.getInput('token', {required: true})
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const prerelease_tag = await prereleaseTag(key)
+    const release_tag = releaseTag(prerelease_tag)
 
-    core.setOutput('time', new Date().toTimeString())
+    await core.group('Create release tag', async () => {
+      await exec('git', ['tag', release_tag, key])
+      await exec('git', ['push', 'origin', release_tag])
+    })
+
+    await core.group('Clean up prerelease tag', async () => {
+      await exec('git', ['tag', '--delete', prerelease_tag, key])
+      await exec('git', ['push', '--delete', 'origin', key])
+      await exec('git', ['push', '--delete', 'origin', prerelease_tag])
+    })
+
+    await deleteEnvironment(token, key)
   } catch (error) {
     core.setFailed(error.message)
   }
