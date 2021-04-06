@@ -1,11 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Post-Integration: Prerelease Action'
+description: 'Release action for post-integration'
+author: 'sepulsa'
 inputs:
-  milliseconds: # change this
+  key:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'JIRA issue key'
+  token:
+    required: true
+    description: 'Github Personal Access Token with permission to delete environment'
 runs:
   using: 'node12'
   main: 'dist/index.js'
