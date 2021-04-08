@@ -105,7 +105,7 @@ const tag_1 = __webpack_require__(2829);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const key = core.getInput('key', { required: true }).toLowerCase();
+            const key = core.getInput('key', { required: true }).toUpperCase();
             const token = core.getInput('token', { required: true });
             const prerelease_tag = yield tag_1.prereleaseTag(key);
             const release_tag = tag_1.releaseTag(prerelease_tag);

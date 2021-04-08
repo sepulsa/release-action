@@ -5,7 +5,7 @@ import {prereleaseTag, releaseTag} from './tag'
 
 async function run(): Promise<void> {
   try {
-    const key = core.getInput('key', {required: true}).toLowerCase()
+    const key = core.getInput('key', {required: true}).toUpperCase()
     const token = core.getInput('token', {required: true})
 
     const prerelease_tag = await prereleaseTag(key)
