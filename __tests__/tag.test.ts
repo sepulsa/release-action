@@ -1,19 +1,19 @@
 import {execSync} from 'child_process'
 import {prereleaseTag, releaseTag} from '../src/tag'
 
-beforeAll(async () => {
-  execSync('git tag jira-123')
-  execSync('git tag 0.1.1-rc.0')
+beforeAll(() => {
+  execSync('git tag JIRA-999')
+  execSync('git tag 1.1.0-rc.0')
 })
 
-afterAll(async () => {
-  execSync('git tag --delete jira-123 0.1.1-rc.0')
+afterAll(() => {
+  execSync('git tag --delete JIRA-999 1.1.0-rc.0')
 })
 
 test('Prerelease tag', async () => {
-  expect(await prereleaseTag('jira-123')).toEqual('0.1.1-rc.0')
+  expect(await prereleaseTag('JIRA-999')).toEqual('1.1.0-rc.0')
 })
 
-test('Release tag', async () => {
-  expect(releaseTag('0.1.1-rc.0')).toEqual('0.1.1')
+test('Release tag', () => {
+  expect(releaseTag('1.1.0-rc.0')).toEqual('1.1.0')
 })

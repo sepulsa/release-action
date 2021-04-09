@@ -165,7 +165,7 @@ function prereleaseTag(key) {
 exports.prereleaseTag = prereleaseTag;
 function releaseTag(prerelease_tag) {
     const semver = new semver_1.SemVer(prerelease_tag);
-    const inc = semver.inc('patch');
+    const inc = semver.inc('minor');
     return inc.version;
 }
 exports.releaseTag = releaseTag;
