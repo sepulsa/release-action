@@ -21,6 +21,5 @@ export async function prereleaseTag(key: string): Promise<string> {
 
 export function releaseTag(prerelease_tag: string): string {
   const semver = new SemVer(prerelease_tag)
-  const inc = semver.inc('minor')
-  return inc.version
+  return semver.inc('minor').version
 }

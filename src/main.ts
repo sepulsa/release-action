@@ -11,6 +11,8 @@ async function run(): Promise<void> {
     const prerelease_tag = await prereleaseTag(key)
     const release_tag = releaseTag(prerelease_tag)
 
+    core.setOutput('tag', release_tag)
+
     await core.group('Create release tag', async () => {
       await exec('git', ['tag', release_tag, key])
       await exec('git', ['push', 'origin', release_tag])

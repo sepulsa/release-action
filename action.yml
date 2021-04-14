@@ -8,6 +8,9 @@ inputs:
   token:
     required: true
     description: 'Github Personal Access Token with permission to delete environment'
+outputs:
+  tag:
+    description: 'Release tag'
 runs:
   using: 'node12'
   main: 'dist/index.js'

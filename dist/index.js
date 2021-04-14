@@ -109,6 +109,7 @@ function run() {
             const token = core.getInput('token', { required: true });
             const prerelease_tag = yield tag_1.prereleaseTag(key);
             const release_tag = tag_1.releaseTag(prerelease_tag);
+            core.setOutput('tag', release_tag);
             yield core.group('Create release tag', () => __awaiter(this, void 0, void 0, function* () {
                 yield exec_1.exec('git', ['tag', release_tag, key]);
                 yield exec_1.exec('git', ['push', 'origin', release_tag]);
@@ -165,8 +166,7 @@ function prereleaseTag(key) {
 exports.prereleaseTag = prereleaseTag;
 function releaseTag(prerelease_tag) {
     const semver = new semver_1.SemVer(prerelease_tag);
-    const inc = semver.inc('minor');
-    return inc.version;
+    return semver.inc('minor').version;
 }
 exports.releaseTag = releaseTag;
 
