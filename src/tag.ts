@@ -1,22 +1,34 @@
-import {exec, ExecOptions} from '@actions/exec'
-import {SemVer} from 'semver'
+import {exec} from '@actions/exec'
+import {prerelease, SemVer, sort} from 'semver'
 
-export async function prereleaseTag(key: string): Promise<string> {
+export async function prereleaseTag(key: string): Promise<string | undefined> {
   let output = ''
 
-  const options: ExecOptions = {
-    listeners: {
-      stdout: (data: Buffer) => {
-        output += data.toString().trim()
-      }
-    }
-  }
   await exec(
     'git',
-    ['tag', '--list', '--ignore-case', '--points-at', key, '*.*.*'],
-    options
+    [
+      'tag',
+      '--list',
+      '--ignore-case',
+      '--points-at',
+      key,
+      '[0-9]*.[0-9]*.[0-9]*'
+    ],
+    {
+      listeners: {
+        stdout: (data: Buffer) => {
+          output += data.toString().trim()
+        }
+      }
+    }
   )
-  return output
+
+  const tags = output
+    .trim()
+    .split('\n')
+    .filter(tag => prerelease(tag))
+
+  return sort(tags).pop()
 }
 
 export function releaseTag(prerelease_tag: string): string {

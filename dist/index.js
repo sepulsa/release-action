@@ -108,6 +108,10 @@ function run() {
             const key = core.getInput('key', { required: true }).toUpperCase();
             const token = core.getInput('token', { required: true });
             const prerelease_tag = yield tag_1.prereleaseTag(key);
+            if (prerelease_tag === undefined) {
+                core.setFailed("Can't find prerelease tag");
+                return;
+            }
             const release_tag = tag_1.releaseTag(prerelease_tag);
             core.setOutput('tag', release_tag);
             yield core.group('Create release tag', () => __awaiter(this, void 0, void 0, function* () {
@@ -152,15 +156,25 @@ const semver_1 = __webpack_require__(1383);
 function prereleaseTag(key) {
     return __awaiter(this, void 0, void 0, function* () {
         let output = '';
-        const options = {
+        yield exec_1.exec('git', [
+            'tag',
+            '--list',
+            '--ignore-case',
+            '--points-at',
+            key,
+            '[0-9]*.[0-9]*.[0-9]*'
+        ], {
             listeners: {
                 stdout: (data) => {
                     output += data.toString().trim();
                 }
             }
-        };
-        yield exec_1.exec('git', ['tag', '--list', '--ignore-case', '--points-at', key, '*.*.*'], options);
-        return output;
+        });
+        const tags = output
+            .trim()
+            .split('\n')
+            .filter(tag => semver_1.prerelease(tag));
+        return semver_1.sort(tags).pop();
     });
 }
 exports.prereleaseTag = prereleaseTag;

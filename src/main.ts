@@ -9,6 +9,11 @@ async function run(): Promise<void> {
     const token = core.getInput('token', {required: true})
 
     const prerelease_tag = await prereleaseTag(key)
+    if (prerelease_tag === undefined) {
+      core.setFailed("Can't find prerelease tag")
+      return
+    }
+
     const release_tag = releaseTag(prerelease_tag)
 
     core.setOutput('tag', release_tag)
